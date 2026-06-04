@@ -4,596 +4,885 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>استمارة بيان قيام الزوجية وعدد الأولاد</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap');
+:root {
+  --bg: #0F1923;
+  --card: #1A2535;
+  --card2: #222E42;
+  --border: #2E3F58;
+  --accent: #4F8EF7;
+  --accent2: #F7A84F;
+  --text: #E8EDF5;
+  --muted: #8A9BB5;
+  --success: #3DD68C;
+  --font: 'Cairo', sans-serif;
+  --radius: 12px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  direction: rtl;
+}
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+/* ─── TOP BAR ─── */
+.topbar {
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  padding: 0 32px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky; top: 0; z-index: 100;
+}
+.topbar-logo {
+  display: flex; align-items: center; gap: 10px;
+}
+.topbar-logo .icon {
+  width: 34px; height: 34px;
+  background: linear-gradient(135deg, var(--accent), #2563EB);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+.topbar-logo .title { font-size: 15px; font-weight: 700; }
+.topbar-logo .subtitle { font-size: 11px; color: var(--muted); margin-top: 1px; }
 
-  body {
-    font-family: 'Noto Naskh Arabic', 'Arial', serif;
-    background: #d0d0d0;
-    min-height: 100vh;
-    padding: 20px;
-    direction: rtl;
-  }
+.progress-wrap {
+  display: flex; align-items: center; gap: 12px;
+}
+.progress-label { font-size: 12px; color: var(--muted); }
+.progress-bar {
+  width: 140px; height: 6px;
+  background: var(--border);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--success));
+  border-radius: 99px;
+  transition: width 0.4s ease;
+  width: 0%;
+}
 
-  .toolbar {
-    max-width: 800px;
-    margin: 0 auto 16px;
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-  }
+/* ─── MAIN LAYOUT ─── */
+.main {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 32px 20px 60px;
+}
 
-  .btn-pdf {
-    background: #1a4a7a;
-    color: #fff;
-    border: none;
-    padding: 10px 28px;
-    border-radius: 6px;
-    font-family: 'Noto Naskh Arabic', Arial, sans-serif;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: background 0.2s;
-  }
-  .btn-pdf:hover { background: #0f3260; }
-  .btn-pdf svg { width: 18px; height: 18px; }
+/* ─── STEP HEADER ─── */
+.step-header {
+  margin-bottom: 28px;
+}
+.step-badge {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: rgba(79,142,247,0.12);
+  border: 1px solid rgba(79,142,247,0.25);
+  color: var(--accent);
+  font-size: 12px; font-weight: 700;
+  padding: 4px 12px; border-radius: 99px;
+  margin-bottom: 10px;
+}
+.step-title { font-size: 22px; font-weight: 800; }
+.step-desc { font-size: 13px; color: var(--muted); margin-top: 4px; }
 
-  .btn-reset {
-    background: #fff;
-    color: #555;
-    border: 1.5px solid #aaa;
-    padding: 10px 20px;
-    border-radius: 6px;
-    font-family: 'Noto Naskh Arabic', Arial, sans-serif;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .btn-reset:hover { background: #f0f0f0; }
+/* ─── CARD ─── */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-bottom: 16px;
+}
+.card-title {
+  font-size: 14px; font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 18px;
+  display: flex; align-items: center; gap: 8px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.card-title .dot {
+  width: 8px; height: 8px;
+  background: var(--accent);
+  border-radius: 50%;
+}
 
-  .hint {
-    font-family: 'Noto Naskh Arabic', Arial, sans-serif;
-    font-size: 13px;
-    color: #666;
-    text-align: center;
-  }
+/* ─── GRID ─── */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; }
+.span-2 { grid-column: span 2; }
 
-  /* A4 page */
-  #form-page {
-    background: #fff;
-    width: 794px;
-    min-height: 1123px;
-    margin: 0 auto;
-    padding: 30px 36px 36px;
-    border: 1px solid #bbb;
-    box-shadow: 0 2px 20px rgba(0,0,0,0.15);
-    position: relative;
-  }
+/* ─── FIELD ─── */
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label {
+  font-size: 12px; font-weight: 600; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+.field input, .field select {
+  background: var(--card2);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-family: var(--font);
+  font-size: 14px;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s, background 0.2s;
+  direction: rtl;
+  text-align: right;
+  width: 100%;
+}
+.field input:focus, .field select:focus {
+  border-color: var(--accent);
+  background: rgba(79,142,247,0.06);
+}
+.field input::placeholder { color: #4A5A72; }
+.field select { cursor: pointer; appearance: none; -webkit-appearance: none; }
+.field select option { background: #1A2535; }
 
-  h1.form-title {
-    text-align: center;
-    font-size: 17px;
-    font-weight: 700;
-    margin-bottom: 18px;
-    letter-spacing: 0.5px;
-  }
+/* ─── RADIO GROUP ─── */
+.radio-group {
+  display: flex; gap: 10px; flex-wrap: wrap;
+}
+.radio-opt {
+  flex: 1; min-width: 90px;
+  background: var(--card2);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  cursor: pointer;
+  display: flex; align-items: center; gap: 8px;
+  transition: all 0.2s;
+  font-size: 14px; font-weight: 600;
+}
+.radio-opt:hover { border-color: var(--accent); background: rgba(79,142,247,0.06); }
+.radio-opt input[type="radio"] { display: none; }
+.radio-opt .check {
+  width: 18px; height: 18px;
+  border: 2px solid var(--border);
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+.radio-opt.selected {
+  border-color: var(--accent);
+  background: rgba(79,142,247,0.1);
+  color: var(--accent);
+}
+.radio-opt.selected .check {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+.radio-opt.selected .check::after {
+  content: '';
+  width: 8px; height: 8px;
+  background: #fff;
+  border-radius: 50%;
+}
 
-  /* Input style */
-  input[type="text"], input[type="date"], select {
-    border: none;
-    border-bottom: 1.2px solid #333;
-    outline: none;
-    background: transparent;
-    font-family: 'Noto Naskh Arabic', Arial, sans-serif;
-    font-size: 13px;
-    width: 100%;
-    padding: 1px 2px;
-    color: #000;
-    text-align: right;
-    direction: rtl;
-  }
-  input[type="text"]:focus, input[type="date"]:focus, select:focus {
-    border-bottom-color: #1a4a7a;
-    background: #f0f6ff;
-  }
+/* ─── DATE ROW ─── */
+.date-row {
+  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;
+}
+.date-row .field label { font-size: 10px; }
 
-  /* Top info section */
-  .top-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    border: 1.2px solid #333;
-    margin-bottom: 10px;
-  }
-  .top-grid .cell {
-    padding: 5px 8px;
-    border: 0.6px solid #555;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .top-grid .cell label {
-    white-space: nowrap;
-    font-size: 12.5px;
-    font-weight: 600;
-    min-width: 90px;
-  }
-  .top-grid .cell.full {
-    grid-column: span 2;
-  }
+/* ─── CHILDREN TABLE ─── */
+.children-header {
+  display: grid;
+  grid-template-columns: 32px 1fr 80px 64px 64px 64px 1fr 90px 90px 90px;
+  gap: 6px;
+  padding: 8px 10px;
+  background: rgba(79,142,247,0.08);
+  border-radius: 8px;
+  margin-bottom: 6px;
+  font-size: 11px; font-weight: 700; color: var(--accent);
+  text-align: center;
+}
+.child-row {
+  display: grid;
+  grid-template-columns: 32px 1fr 80px 64px 64px 64px 1fr 90px 90px 90px;
+  gap: 6px;
+  align-items: center;
+  padding: 4px 6px;
+  border-radius: 8px;
+  transition: background 0.15s;
+  margin-bottom: 3px;
+}
+.child-row:hover { background: rgba(255,255,255,0.03); }
+.child-num {
+  width: 32px; height: 32px;
+  background: var(--card2);
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 800; color: var(--muted);
+  flex-shrink: 0;
+}
+.child-row input, .child-row select {
+  background: var(--card2);
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  padding: 7px 8px;
+  font-family: var(--font);
+  font-size: 12px;
+  color: var(--text);
+  outline: none;
+  width: 100%;
+  text-align: center;
+  direction: rtl;
+  transition: border-color 0.15s;
+}
+.child-row input:focus, .child-row select:focus { border-color: var(--accent); }
+.child-row input::placeholder { color: #3A4A62; }
+.child-row select { appearance: none; -webkit-appearance: none; cursor: pointer; }
+.child-row select option { background: #1A2535; }
 
-  /* Marital status row */
-  .marital-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 8px;
-  }
-  .marital-table th, .marital-table td {
-    border: 1.2px solid #333;
-    padding: 5px 8px;
-    text-align: center;
-    font-size: 12.5px;
-  }
-  .marital-table th { font-weight: 700; background: #f5f5f5; }
-  .marital-table .status-cell {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-  }
-  .marital-table input[type="radio"] { cursor: pointer; width: 14px; height: 14px; }
+/* ─── TOTALS ─── */
+.totals-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+}
+.total-item {
+  background: var(--card2);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 16px;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.total-item.highlight {
+  border-color: var(--accent2);
+  background: rgba(247,168,79,0.06);
+}
+.total-item label {
+  font-size: 12px; font-weight: 600; color: var(--muted);
+}
+.total-item.highlight label { color: var(--accent2); }
+.total-item input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  padding: 4px 0;
+  font-family: var(--font);
+  font-size: 16px; font-weight: 700;
+  color: var(--text);
+  outline: none;
+  width: 100%;
+  text-align: right;
+}
+.total-item.highlight input { color: var(--accent2); }
 
-  /* Section title */
-  .section-label {
-    font-size: 13px;
-    font-weight: 700;
-    margin: 8px 0 4px;
-    border-bottom: 1px solid #333;
-    padding-bottom: 2px;
-  }
+/* ─── SUBMIT BUTTON ─── */
+.submit-wrap {
+  margin-top: 32px;
+  display: flex; justify-content: center;
+}
+.btn-submit {
+  background: linear-gradient(135deg, var(--accent), #2563EB);
+  color: #fff;
+  border: none;
+  padding: 14px 48px;
+  border-radius: 10px;
+  font-family: var(--font);
+  font-size: 16px; font-weight: 800;
+  cursor: pointer;
+  display: flex; align-items: center; gap: 10px;
+  box-shadow: 0 4px 20px rgba(79,142,247,0.35);
+  transition: all 0.2s;
+}
+.btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(79,142,247,0.45); }
+.btn-submit:active { transform: translateY(0); }
+.btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
-  /* Children table */
-  .children-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 6px;
-    font-size: 12px;
-  }
-  .children-table th, .children-table td {
-    border: 1.2px solid #333;
-    padding: 3px 4px;
-    text-align: center;
-    vertical-align: middle;
-  }
-  .children-table th {
-    background: #f0f0f0;
-    font-weight: 700;
-    font-size: 12px;
-  }
-  .children-table td input[type="text"] {
-    font-size: 12px;
-    text-align: center;
-  }
-  .children-table td.row-num {
-    width: 28px;
-    font-weight: 600;
-    background: #fafafa;
-  }
+/* ─── HIDDEN PDF TEMPLATE ─── */
+#pdf-template {
+  position: fixed;
+  top: -9999px; left: -9999px;
+  width: 794px;
+  background: white;
+  font-family: 'Times New Roman', 'Arial', serif;
+  direction: rtl;
+  font-size: 13px;
+  color: #000;
+  padding: 30px 36px;
+}
 
-  /* Totals section */
-  .totals-section {
-    display: flex;
-    justify-content: flex-end;
-  }
-  .totals-table {
-    border-collapse: collapse;
-    font-size: 12.5px;
-    width: 340px;
-  }
-  .totals-table td {
-    border: 1.2px solid #333;
-    padding: 5px 10px;
-  }
-  .totals-table td:first-child {
-    font-weight: 700;
-    background: #f5f5f5;
-    text-align: right;
-    width: 200px;
-  }
-  .totals-table td:last-child {
-    width: 140px;
-    text-align: center;
-  }
+/* PDF template styles */
+#pdf-template .pt-title {
+  text-align: center;
+  font-size: 17px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  font-family: 'Times New Roman', serif;
+}
+#pdf-template table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 10px;
+}
+#pdf-template td, #pdf-template th {
+  border: 1px solid #333;
+  padding: 5px 7px;
+  vertical-align: middle;
+  font-size: 12.5px;
+}
+#pdf-template .lbl {
+  font-weight: bold;
+  background: #f5f5f5;
+  text-align: right;
+  white-space: nowrap;
+}
+#pdf-template .val {
+  font-family: 'Amiri', 'Arial', sans-serif;
+  font-size: 13px;
+  color: #000;
+  min-height: 20px;
+}
+#pdf-template .val-filled {
+  font-family: 'Cairo', 'Arial', sans-serif;
+  font-size: 13px;
+  color: #1a1a6e;
+  font-weight: 600;
+}
+#pdf-template .sec-title {
+  font-size: 13px;
+  font-weight: bold;
+  margin: 8px 0 4px;
+  text-align: right;
+  border-bottom: 1px solid #333;
+  padding-bottom: 2px;
+}
+#pdf-template .ch-th {
+  background: #e8e8e8;
+  font-weight: bold;
+  text-align: center;
+  font-size: 11.5px;
+}
+#pdf-template .ch-td {
+  text-align: center;
+  font-size: 12.5px;
+  color: #1a1a6e;
+  font-weight: 600;
+  min-height: 18px;
+}
+#pdf-template .ch-empty {
+  min-height: 18px;
+}
+#pdf-template .totals-right {
+  float: left;
+  width: 340px;
+}
+#pdf-template .totals-right td { font-size: 12.5px; }
+#pdf-template .totals-right .t-lbl {
+  font-weight: bold; text-align: right; background: #f5f5f5;
+}
+#pdf-template .totals-right .t-val {
+  text-align: center; color: #1a1a6e; font-weight: 700;
+}
+#pdf-template .declaration {
+  font-size: 12px;
+  line-height: 1.9;
+  border: 1px solid #333;
+  padding: 8px 12px;
+  margin: 12px 0;
+  text-align: justify;
+}
+#pdf-template .sig-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin: 10px 0;
+}
+#pdf-template .sig-block { text-align: center; }
+#pdf-template .sig-lbl { font-size: 12.5px; font-weight: bold; margin-bottom: 4px; }
+#pdf-template .sig-line { border-bottom: 1px solid #333; min-height: 32px; width: 160px; }
+#pdf-template .officials-divider { border-top: 1px solid #333; margin: 10px 0 6px; }
+#pdf-template .officials-row { display: flex; justify-content: space-around; }
+#pdf-template .off-block { text-align: center; }
+#pdf-template .off-lbl { font-size: 12px; font-weight: bold; margin-bottom: 6px; }
+#pdf-template .off-line { border-bottom: 1px solid #333; min-height: 28px; width: 130px; }
+#pdf-template .radio-mark { font-size: 16px; font-weight: bold; color: #000; }
+#pdf-template .date-val { color: #1a1a6e; font-weight: 700; }
 
-  /* Declaration */
-  .declaration {
-    font-size: 11.5px;
-    line-height: 1.8;
-    border: 1.2px solid #333;
-    padding: 10px 12px;
-    margin: 12px 0;
-    text-align: justify;
-  }
+/* ─── TOAST ─── */
+.toast {
+  position: fixed; bottom: 28px; right: 28px;
+  background: var(--success);
+  color: #fff;
+  padding: 12px 22px;
+  border-radius: 10px;
+  font-size: 14px; font-weight: 700;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  display: none;
+  align-items: center; gap: 8px;
+  z-index: 9999;
+}
+.toast.show { display: flex; animation: slideUp 0.3s ease; }
+@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-  /* Signature row */
-  .sig-section {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-top: 12px;
-    gap: 10px;
-  }
-  .sig-block {
-    flex: 1;
-    text-align: center;
-    font-size: 12.5px;
-  }
-  .sig-block label { font-weight: 700; display: block; margin-bottom: 4px; }
-  .sig-block .sig-line {
-    border-bottom: 1.2px solid #333;
-    min-height: 30px;
-    display: block;
-  }
-
-  /* Footer officials */
-  .officials-row {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 16px;
-    border-top: 1.2px solid #333;
-    padding-top: 8px;
-    gap: 10px;
-    align-items: flex-start;
-  }
-  .official-block {
-    flex: 1;
-    text-align: center;
-    font-size: 12.5px;
-  }
-  .official-block label { font-weight: 700; display: block; margin-bottom: 6px; }
-  .official-block .sig-line { border-bottom: 1.2px solid #333; min-height: 28px; }
-
-  /* Date inline */
-  .date-row {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 13px;
-    margin-bottom: 6px;
-  }
-  .date-row label { font-weight: 700; min-width: 40px; }
-  .date-part {
-    display: flex;
-    align-items: center;
-    gap: 3px;
-  }
-  .date-part input[type="text"] {
-    width: 44px;
-    text-align: center;
-    font-size: 13px;
-  }
-  .date-part span { font-size: 14px; font-weight: 700; }
-
-  /* Print / PDF mode */
-  @media print {
-    body { background: white; padding: 0; }
-    .toolbar { display: none; }
-    #form-page {
-      box-shadow: none;
-      border: none;
-      width: 100%;
-      margin: 0;
-      padding: 15mm;
-    }
-    input, select { border-bottom: 1px solid #333 !important; }
-  }
-
-  /* Responsive */
-  @media (max-width: 840px) {
-    #form-page { width: 100%; padding: 16px; }
-  }
+@media (max-width: 700px) {
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  .span-2 { grid-column: span 1; }
+  .children-header, .child-row { grid-template-columns: 28px 1fr 60px 50px 50px 50px 1fr 70px 70px 70px; font-size: 10px; }
+  .topbar { padding: 0 14px; }
+  .main { padding: 16px 10px 40px; }
+}
 </style>
 </head>
 <body>
 
-<div class="toolbar">
-  <button class="btn-pdf" onclick="downloadPDF()">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <path d="M12 15V3m0 12l-4-4m4 4l4-4M2 17l.621 2.485A2 2 0 004.561 21h14.878a2 2 0 001.94-1.515L22 17"/>
-    </svg>
-    تحميل PDF
-  </button>
-  <button class="btn-reset" onclick="resetForm()">مسح البيانات</button>
-  <span class="hint">💡 املأ الاستمارة ثم اضغط "تحميل PDF"</span>
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-logo">
+    <div class="icon">📋</div>
+    <div>
+      <div class="title">بوابة الاستمارات الرسمية</div>
+      <div class="subtitle">استمارة بيان قيام الزوجية وعدد الأولاد</div>
+    </div>
+  </div>
+  <div class="progress-wrap">
+    <span class="progress-label" id="pct-label">0%</span>
+    <div class="progress-bar"><div class="progress-fill" id="pbar"></div></div>
+  </div>
 </div>
 
-<div id="form-page">
+<!-- MAIN FORM -->
+<div class="main">
 
-  <h1 class="form-title">استمارة بيان قيام الزوجية وعدد الأولاد</h1>
-
-  <!-- Top Info Grid -->
-  <div class="top-grid">
-    <div class="cell">
-      <label>الاسم الثلاثي:</label>
-      <input type="text" id="full_name" placeholder="الاسم الكامل">
+  <!-- STEP BADGE -->
+  <div class="step-header">
+    <div class="step-badge">
+      <span>●</span> استمارة رسمية
     </div>
-    <div class="cell">
-      <label>الوزارة:</label>
-      <input type="text" id="ministry" placeholder="اسم الوزارة">
-    </div>
-    <div class="cell">
-      <label>الوظيفة:</label>
-      <input type="text" id="job_title" placeholder="المسمى الوظيفي">
-    </div>
-    <div class="cell">
-      <label>الدائرة:</label>
-      <input type="text" id="department" placeholder="اسم الدائرة">
-    </div>
-    <div class="cell full">
-      <label>مهنة الزوج / الزوجة:</label>
-      <input type="text" id="spouse_job" placeholder="مهنة الزوج أو الزوجة">
-    </div>
+    <div class="step-title">بيانات الموظف والحالة الزوجية</div>
+    <div class="step-desc">أدخل بياناتك بدقة · ستُنشأ نسخة PDF رسمية جاهزة للطباعة والتقديم</div>
   </div>
 
-  <!-- Marital Status -->
-  <table class="marital-table">
-    <thead>
-      <tr>
-        <th>الحالة الزوجية</th>
-        <th>متزوج</th>
-        <th>أرمل</th>
-        <th>مطلق</th>
-        <th>جنسية الزوج / الزوجة</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td style="font-weight:700; background:#f5f5f5;">الحالة الزوجية</td>
-        <td>
-          <div class="status-cell">
-            <input type="radio" name="marital" id="married" value="متزوج">
-            <label for="married">متزوج</label>
-          </div>
-        </td>
-        <td>
-          <div class="status-cell">
-            <input type="radio" name="marital" id="widowed" value="أرمل">
-            <label for="widowed">أرمل</label>
-          </div>
-        </td>
-        <td>
-          <div class="status-cell">
-            <input type="radio" name="marital" id="divorced" value="مطلق">
-            <label for="divorced">مطلق</label>
-          </div>
-        </td>
-        <td><input type="text" id="spouse_nationality" placeholder="الجنسية"></td>
-      </tr>
-      <tr>
-        <td style="font-weight:700; background:#f5f5f5;">التاريخ</td>
-        <td colspan="4">
-          <div style="display:flex; gap:20px; justify-content:center; flex-wrap:wrap;">
-            <div class="date-part">
-              <input type="text" id="date_married" placeholder="٢٠ / / " style="width:90px;">
-              <span>متزوج</span>
-            </div>
-            <div class="date-part">
-              <input type="text" id="date_widowed" placeholder="٢٠ / / " style="width:90px;">
-              <span>أرمل</span>
-            </div>
-            <div class="date-part">
-              <input type="text" id="date_divorced" placeholder="٢٠ / / " style="width:90px;">
-              <span>مطلق</span>
-            </div>
-          </div>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-
-  <!-- Children Section -->
-  <div class="section-label">أسماء الأولاد</div>
-
-  <table class="children-table">
-    <thead>
-      <tr>
-        <th rowspan="2">ت</th>
-        <th rowspan="2">الاسم</th>
-        <th rowspan="2">الجنس</th>
-        <th colspan="3">تاريخ التولد</th>
-        <th rowspan="2">المهنة أو المرحلة الدراسية</th>
-        <th rowspan="2">المبلغ المستحق</th>
-        <th colspan="2">قطع الاستحقاق</th>
-      </tr>
-      <tr>
-        <th>يوم</th>
-        <th>شهر</th>
-        <th>سنة</th>
-        <th>التاريخ</th>
-        <th>المبلغ</th>
-      </tr>
-    </thead>
-    <tbody id="children-body">
-      <!-- Generated by JS -->
-    </tbody>
-  </table>
-
-  <!-- Totals -->
-  <div class="totals-section">
-    <table class="totals-table">
-      <tr>
-        <td>المجموع</td>
-        <td><input type="text" id="total_sum" placeholder=""></td>
-      </tr>
-      <tr>
-        <td>يطرح مخصصات الأولاد غير المستحقة</td>
-        <td><input type="text" id="deduct_ineligible" placeholder=""></td>
-      </tr>
-      <tr>
-        <td>صافي مخصصات الأولاد المستحقة الصرف</td>
-        <td><input type="text" id="net_children" placeholder=""></td>
-      </tr>
-      <tr>
-        <td>مخصصات الزوجية</td>
-        <td><input type="text" id="marriage_allowance" placeholder=""></td>
-      </tr>
-      <tr>
-        <td>صافي الاستحقاق</td>
-        <td><input type="text" id="net_total" placeholder=""></td>
-      </tr>
-    </table>
-  </div>
-
-  <!-- Declaration -->
-  <div class="declaration">
-    أؤيد بأن المعلومات المبينة أعلاه صحيحة ومطابقة للواقع وأتعهد بإبلاغ الدائرة على أية تغييرات تطرأ على حالتي الاجتماعية وعدد أولادي خلال شهر واحد من تاريخ وقوعها وقد اطلعت على الملاحظات المدونة في ظهر هذه الاستمارة.
-  </div>
-
-  <!-- Signature -->
-  <div class="sig-section">
-    <div class="sig-block">
-      <label>توقيع مقدم البيان</label>
-      <span class="sig-line"></span>
-    </div>
-    <div class="sig-block" style="flex:2; text-align:right;">
-      <div class="date-row">
-        <label>التاريخ:</label>
-        <input type="text" id="sig_date" placeholder="٢٠   /   /   " style="width:140px;">
+  <!-- PERSONAL INFO -->
+  <div class="card">
+    <div class="card-title"><div class="dot"></div> البيانات الشخصية</div>
+    <div class="grid-2">
+      <div class="field">
+        <label>الاسم الثلاثي</label>
+        <input type="text" id="full_name" placeholder="أدخل اسمك الثلاثي كاملاً" oninput="updateProgress()">
+      </div>
+      <div class="field">
+        <label>الوزارة</label>
+        <input type="text" id="ministry" placeholder="اسم الوزارة" oninput="updateProgress()">
+      </div>
+      <div class="field">
+        <label>الوظيفة</label>
+        <input type="text" id="job_title" placeholder="المسمى الوظيفي" oninput="updateProgress()">
+      </div>
+      <div class="field">
+        <label>الدائرة</label>
+        <input type="text" id="department" placeholder="اسم الدائرة" oninput="updateProgress()">
+      </div>
+      <div class="field span-2">
+        <label>مهنة الزوج / الزوجة</label>
+        <input type="text" id="spouse_job" placeholder="مهنة الزوج أو الزوجة" oninput="updateProgress()">
       </div>
     </div>
   </div>
 
-  <!-- Officials Footer -->
-  <div class="officials-row">
-    <div class="official-block">
-      <label>المسؤول عن الصرف</label>
-      <span class="sig-line"></span>
-    </div>
-    <div class="official-block">
-      <label>الأمر بالصرف</label>
-      <span class="sig-line"></span>
-    </div>
-    <div class="official-block">
-      <label>رئيس الدائرة</label>
-      <span class="sig-line"></span>
+  <!-- MARITAL STATUS -->
+  <div class="card">
+    <div class="card-title"><div class="dot"></div> الحالة الزوجية</div>
+    <div class="grid-2">
+      <div class="field">
+        <label>الحالة الزوجية</label>
+        <div class="radio-group">
+          <div class="radio-opt" onclick="selectRadio('marital','متزوج',this)">
+            <input type="radio" name="marital" value="متزوج">
+            <div class="check"></div>
+            متزوج
+          </div>
+          <div class="radio-opt" onclick="selectRadio('marital','أرمل',this)">
+            <input type="radio" name="marital" value="أرمل">
+            <div class="check"></div>
+            أرمل
+          </div>
+          <div class="radio-opt" onclick="selectRadio('marital','مطلق',this)">
+            <input type="radio" name="marital" value="مطلق">
+            <div class="check"></div>
+            مطلق
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label>جنسية الزوج / الزوجة</label>
+        <input type="text" id="spouse_nationality" placeholder="مثال: عراقية" oninput="updateProgress()">
+      </div>
+
+      <!-- DATE FIELDS -->
+      <div class="field">
+        <label>تاريخ الزواج</label>
+        <div class="date-row">
+          <div class="field"><label>اليوم</label><input type="text" id="dm_d" maxlength="2" placeholder="يوم"></div>
+          <div class="field"><label>الشهر</label><input type="text" id="dm_m" maxlength="2" placeholder="شهر"></div>
+          <div class="field"><label>السنة</label><input type="text" id="dm_y" maxlength="4" placeholder="سنة"></div>
+        </div>
+      </div>
+      <div class="field">
+        <label>تاريخ الترمل / الطلاق (إن وجد)</label>
+        <div class="date-row">
+          <div class="field"><label>اليوم</label><input type="text" id="dw_d" maxlength="2" placeholder="يوم"></div>
+          <div class="field"><label>الشهر</label><input type="text" id="dw_m" maxlength="2" placeholder="شهر"></div>
+          <div class="field"><label>السنة</label><input type="text" id="dw_y" maxlength="4" placeholder="سنة"></div>
+        </div>
+      </div>
     </div>
   </div>
 
-</div><!-- end form-page -->
+  <!-- CHILDREN -->
+  <div class="card">
+    <div class="card-title"><div class="dot"></div> أسماء الأولاد</div>
+    <div class="children-header">
+      <div>ت</div>
+      <div>الاسم</div>
+      <div>الجنس</div>
+      <div>يوم</div>
+      <div>شهر</div>
+      <div>سنة</div>
+      <div>المرحلة / المهنة</div>
+      <div>المبلغ</div>
+      <div>تاريخ القطع</div>
+      <div>مبلغ القطع</div>
+    </div>
+    <div id="children-rows"></div>
+  </div>
+
+  <!-- TOTALS -->
+  <div class="card">
+    <div class="card-title"><div class="dot"></div> الإجماليات المالية</div>
+    <div class="totals-grid">
+      <div class="total-item">
+        <label>المجموع</label>
+        <input type="text" id="t1" placeholder="0">
+      </div>
+      <div class="total-item">
+        <label>يطرح مخصصات الأولاد غير المستحقة</label>
+        <input type="text" id="t2" placeholder="0">
+      </div>
+      <div class="total-item">
+        <label>صافي مخصصات الأولاد المستحقة الصرف</label>
+        <input type="text" id="t3" placeholder="0">
+      </div>
+      <div class="total-item">
+        <label>مخصصات الزوجية</label>
+        <input type="text" id="t4" placeholder="0">
+      </div>
+      <div class="total-item highlight span-2">
+        <label>✦ صافي الاستحقاق النهائي</label>
+        <input type="text" id="t5" placeholder="0">
+      </div>
+    </div>
+  </div>
+
+  <!-- SUBMIT -->
+  <div class="submit-wrap">
+    <button class="btn-submit" id="btnSubmit" onclick="generatePDF()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 15V3m0 12l-4-4m4 4l4-4"/><path d="M2 17l.621 2.485A2 2 0 004.561 21h14.878a2 2 0 001.94-1.515L22 17"/></svg>
+      حفظ وتنزيل الاستمارة PDF
+    </button>
+  </div>
+
+</div><!-- /main -->
+
+<!-- PDF TEMPLATE (hidden) -->
+<div id="pdf-template">
+  <div class="pt-title">استمارة بيان قيام الزوجية وعدد الأولاد</div>
+
+  <table>
+    <tr>
+      <td class="lbl" style="width:130px;">الاسم الثلاثي</td>
+      <td class="val"><span class="val-filled" id="p_name"></span></td>
+      <td class="lbl" style="width:60px;">الوزارة</td>
+      <td class="val"><span class="val-filled" id="p_ministry"></span></td>
+    </tr>
+    <tr>
+      <td class="lbl">الوظيفة</td>
+      <td class="val"><span class="val-filled" id="p_job"></span></td>
+      <td class="lbl">الدائرة</td>
+      <td class="val"><span class="val-filled" id="p_dept"></span></td>
+    </tr>
+    <tr>
+      <td class="lbl">مهنة الزوج / الزوجة</td>
+      <td class="val" colspan="3"><span class="val-filled" id="p_sjob"></span></td>
+    </tr>
+  </table>
+
+  <table>
+    <tr>
+      <th class="ch-th" style="width:18%;">الحالة الزوجية</th>
+      <th class="ch-th" style="width:16%;">متزوج</th>
+      <th class="ch-th" style="width:16%;">أرمل</th>
+      <th class="ch-th" style="width:16%;">مطلق</th>
+      <th class="ch-th">جنسية الزوج / الزوجة</th>
+    </tr>
+    <tr>
+      <td class="lbl">الحالة الزوجية</td>
+      <td style="text-align:center;" id="p_r_married"></td>
+      <td style="text-align:center;" id="p_r_widowed"></td>
+      <td style="text-align:center;" id="p_r_divorced"></td>
+      <td class="ch-td" id="p_snationality"></td>
+    </tr>
+    <tr>
+      <td class="lbl">التاريخ</td>
+      <td style="text-align:center;"><span class="date-val" id="p_dm"></span></td>
+      <td style="text-align:center;"><span class="date-val" id="p_dw"></span></td>
+      <td style="text-align:center;"><span class="date-val" id="p_dd"></span></td>
+      <td></td>
+    </tr>
+  </table>
+
+  <div class="sec-title">أسماء الأولاد</div>
+  <table id="p_children_table">
+    <tr>
+      <th class="ch-th" rowspan="2" style="width:24px;">ت</th>
+      <th class="ch-th" rowspan="2">الاسم</th>
+      <th class="ch-th" rowspan="2" style="width:44px;">الجنس</th>
+      <th class="ch-th" colspan="3">تاريخ التولد</th>
+      <th class="ch-th" rowspan="2">المهنة أو المرحلة الدراسية</th>
+      <th class="ch-th" rowspan="2" style="width:65px;">المبلغ المستحق</th>
+      <th class="ch-th" colspan="2">قطع الاستحقاق</th>
+    </tr>
+    <tr>
+      <th class="ch-th" style="width:34px;">يوم</th>
+      <th class="ch-th" style="width:34px;">شهر</th>
+      <th class="ch-th" style="width:44px;">سنة</th>
+      <th class="ch-th" style="width:65px;">التاريخ</th>
+      <th class="ch-th" style="width:60px;">المبلغ</th>
+    </tr>
+    <tbody id="p_children_body"></tbody>
+  </table>
+
+  <div style="overflow:hidden; margin:8px 0;">
+    <table class="totals-right">
+      <tr><td class="t-lbl">المجموع</td><td class="t-val" id="p_t1"></td></tr>
+      <tr><td class="t-lbl">يطرح مخصصات الأولاد غير المستحقة</td><td class="t-val" id="p_t2"></td></tr>
+      <tr><td class="t-lbl">صافي مخصصات الأولاد المستحقة الصرف</td><td class="t-val" id="p_t3"></td></tr>
+      <tr><td class="t-lbl">مخصصات الزوجية</td><td class="t-val" id="p_t4"></td></tr>
+      <tr><td class="t-lbl">صافي الاستحقاق</td><td class="t-val" id="p_t5"></td></tr>
+    </table>
+  </div>
+
+  <div class="declaration">
+    أؤيد بأن المعلومات المبينة أعلاه صحيحة ومطابقة للواقع وأتعهد بإبلاغ الدائرة على أية تغييرات تطرأ على حالتي الاجتماعية وعدد أولادي خلال شهر واحد من تاريخ وقوعها وقد اطلعت على الملاحظات المدونة في ظهر هذه الاستمارة.
+  </div>
+
+  <div class="sig-row">
+    <div class="sig-block">
+      <div class="sig-lbl">توقيع مقدم البيان</div>
+      <div class="sig-lbl">البيـــان</div>
+      <div class="sig-line"></div>
+    </div>
+    <div class="sig-block">
+      <div class="sig-lbl">التاريخ &nbsp; <span class="date-val" id="p_sig_date"></span></div>
+      <div class="sig-line"></div>
+    </div>
+  </div>
+
+  <div class="officials-divider"></div>
+  <div class="officials-row">
+    <div class="off-block">
+      <div class="off-lbl">المسؤول عن الصـرف</div>
+      <div class="off-line"></div>
+    </div>
+    <div class="off-block">
+      <div class="off-lbl">الأمر بالصـرف</div>
+      <div class="off-line"></div>
+    </div>
+    <div class="off-block">
+      <div class="off-lbl">رئيس الدائـرة</div>
+      <div class="off-line"></div>
+    </div>
+  </div>
+
+</div><!-- /pdf-template -->
+
+<!-- TOAST -->
+<div class="toast" id="toast">✅ تم إنشاء PDF بنجاح!</div>
 
 <script>
-// Build children rows
-const CHILDREN_ROWS = 10;
-const tbody = document.getElementById('children-body');
-for (let i = 1; i <= CHILDREN_ROWS; i++) {
-  const tr = document.createElement('tr');
-  tr.innerHTML = `
-    <td class="row-num">${i}</td>
-    <td><input type="text" placeholder=""></td>
-    <td>
-      <select>
-        <option value=""></option>
-        <option value="ذكر">ذكر</option>
-        <option value="أنثى">أنثى</option>
-      </select>
-    </td>
-    <td><input type="text" placeholder="" style="width:40px;"></td>
-    <td><input type="text" placeholder="" style="width:40px;"></td>
-    <td><input type="text" placeholder="" style="width:50px;"></td>
-    <td><input type="text" placeholder=""></td>
-    <td><input type="text" placeholder=""></td>
-    <td><input type="text" placeholder=""></td>
-    <td><input type="text" placeholder=""></td>
-  `;
-  tbody.appendChild(tr);
-}
-
-// Reset form
-function resetForm() {
-  if (confirm('هل تريد مسح جميع البيانات المدخلة؟')) {
-    document.querySelectorAll('input[type="text"]').forEach(i => i.value = '');
-    document.querySelectorAll('input[type="radio"]').forEach(i => i.checked = false);
-    document.querySelectorAll('select').forEach(s => s.selectedIndex = 0);
+// ─── BUILD CHILDREN ROWS ───
+(function(){
+  const container = document.getElementById('children-rows');
+  for(let i=1;i<=10;i++){
+    const row = document.createElement('div');
+    row.className = 'child-row';
+    row.id = `cr_${i}`;
+    row.innerHTML = `
+      <div class="child-num">${i}</div>
+      <input type="text" placeholder="الاسم" id="c${i}_name">
+      <select id="c${i}_sex"><option value=""></option><option>ذكر</option><option>أنثى</option></select>
+      <input type="text" maxlength="2" placeholder="" id="c${i}_bd">
+      <input type="text" maxlength="2" placeholder="" id="c${i}_bm">
+      <input type="text" maxlength="4" placeholder="" id="c${i}_by">
+      <input type="text" placeholder="" id="c${i}_stage">
+      <input type="text" placeholder="" id="c${i}_amount">
+      <input type="text" placeholder="" id="c${i}_cut_date">
+      <input type="text" placeholder="" id="c${i}_cut_amt">
+    `;
+    container.appendChild(row);
   }
+})();
+
+// ─── RADIO SELECTION ───
+let maritalValue = '';
+function selectRadio(name, value, el) {
+  document.querySelectorAll(`.radio-opt`).forEach(o => {
+    if(o.querySelector(`input[name="${name}"]`)) o.classList.remove('selected');
+  });
+  el.classList.add('selected');
+  el.querySelector('input[type="radio"]').checked = true;
+  if(name === 'marital') maritalValue = value;
+  updateProgress();
 }
 
-// Download PDF using html2canvas + jsPDF
-async function downloadPDF() {
-  const btn = document.querySelector('.btn-pdf');
+// ─── PROGRESS ───
+function updateProgress(){
+  const fields = ['full_name','ministry','job_title','department'];
+  const filled = fields.filter(id => document.getElementById(id).value.trim()).length;
+  const total = fields.length + 1;
+  const pct = Math.round(((filled + (maritalValue?1:0)) / total) * 100);
+  document.getElementById('pbar').style.width = pct + '%';
+  document.getElementById('pct-label').textContent = pct + '%';
+}
+
+// ─── GENERATE PDF ───
+async function generatePDF(){
+  const btn = document.getElementById('btnSubmit');
   btn.disabled = true;
-  btn.textContent = 'جاري التحضير...';
+  btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> جاري الإنشاء...`;
+
+  // ─ Fill PDF template ─
+  const g = id => { const el=document.getElementById(id); return el ? el.value.trim() : ''; };
+
+  document.getElementById('p_name').textContent      = g('full_name');
+  document.getElementById('p_ministry').textContent  = g('ministry');
+  document.getElementById('p_job').textContent       = g('job_title');
+  document.getElementById('p_dept').textContent      = g('department');
+  document.getElementById('p_sjob').textContent      = g('spouse_job');
+  document.getElementById('p_snationality').textContent = g('spouse_nationality');
+
+  // Marital radio marks
+  ['married','widowed','divorced'].forEach(id => {
+    document.getElementById(`p_r_${id}`).innerHTML = '';
+  });
+  if(maritalValue === 'متزوج') document.getElementById('p_r_married').innerHTML = '<span class="radio-mark">✔</span>';
+  if(maritalValue === 'أرمل')  document.getElementById('p_r_widowed').innerHTML = '<span class="radio-mark">✔</span>';
+  if(maritalValue === 'مطلق') document.getElementById('p_r_divorced').innerHTML = '<span class="radio-mark">✔</span>';
+
+  // Dates
+  const fmtDate = (d,m,y) => {
+    const parts = [y,m,d].filter(Boolean);
+    if(!parts.length) return '';
+    return [d||'',m||'',y||''].filter(Boolean).join(' / ');
+  };
+  document.getElementById('p_dm').textContent = fmtDate(g('dm_d'),g('dm_m'),g('dm_y'));
+  document.getElementById('p_dw').textContent = fmtDate(g('dw_d'),g('dw_m'),g('dw_y'));
+  document.getElementById('p_sig_date').textContent = new Date().toLocaleDateString('ar-IQ');
+
+  // Children
+  const tbody = document.getElementById('p_children_body');
+  tbody.innerHTML = '';
+  for(let i=1;i<=10;i++){
+    const name    = g(`c${i}_name`);
+    const sex     = (() => { const s=document.getElementById(`c${i}_sex`); return s&&s.selectedIndex>0?s.options[s.selectedIndex].text:''; })();
+    const bd      = g(`c${i}_bd`);
+    const bm      = g(`c${i}_bm`);
+    const by      = g(`c${i}_by`);
+    const stage   = g(`c${i}_stage`);
+    const amount  = g(`c${i}_amount`);
+    const cutd    = g(`c${i}_cut_date`);
+    const cuta    = g(`c${i}_cut_amt`);
+    const filled  = name||sex||bd||bm||by;
+    const cls     = filled ? 'ch-td' : 'ch-empty';
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="${cls}" style="text-align:center;width:24px;">${i}</td>
+      <td class="${cls}">${name}</td>
+      <td class="${cls}" style="text-align:center;">${sex}</td>
+      <td class="${cls}" style="text-align:center;">${bd}</td>
+      <td class="${cls}" style="text-align:center;">${bm}</td>
+      <td class="${cls}" style="text-align:center;">${by}</td>
+      <td class="${cls}">${stage}</td>
+      <td class="${cls}" style="text-align:center;">${amount}</td>
+      <td class="${cls}" style="text-align:center;">${cutd}</td>
+      <td class="${cls}" style="text-align:center;">${cuta}</td>
+    `;
+    tbody.appendChild(tr);
+  }
+
+  // Totals
+  ['t1','t2','t3','t4','t5'].forEach(id => {
+    document.getElementById(`p_${id}`).textContent = g(id);
+  });
+
+  // ─ Render PDF template to canvas → jsPDF ─
+  await new Promise(r => setTimeout(r, 100));
+
+  const tmpl = document.getElementById('pdf-template');
+  tmpl.style.top = '0';
+  tmpl.style.left = '0';
+  tmpl.style.position = 'absolute';
+  tmpl.style.zIndex = '-1';
 
   try {
-    const page = document.getElementById('form-page');
-
-    // Temporarily hide outlines for cleaner PDF
-    const inputs = page.querySelectorAll('input, select');
-    inputs.forEach(el => {
-      el.dataset.oldBg = el.style.background;
-      el.style.background = 'transparent';
-    });
-
-    const canvas = await html2canvas(page, {
-      scale: 2,
-      useCORS: true,
-      backgroundColor: '#ffffff',
-      logging: false,
-      width: page.scrollWidth,
-      height: page.scrollHeight
-    });
-
-    // Restore
-    inputs.forEach(el => { el.style.background = el.dataset.oldBg || ''; });
-
     const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
 
-    const pdfW = pdf.internal.pageSize.getWidth();
-    const pdfH = pdf.internal.pageSize.getHeight();
+    // Use jsPDF html() method for best Arabic text rendering
+    const pdf = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
 
-    const imgData = canvas.toDataURL('image/jpeg', 0.97);
-    const canvasRatio = canvas.height / canvas.width;
-    const imgH = pdfW * canvasRatio;
-
-    if (imgH <= pdfH) {
-      pdf.addImage(imgData, 'JPEG', 0, 0, pdfW, imgH);
-    } else {
-      // Multi-page if content is long
-      let yOffset = 0;
-      const pageHeightPx = (pdfH / pdfW) * canvas.width;
-      while (yOffset < canvas.height) {
-        const sliceH = Math.min(pageHeightPx, canvas.height - yOffset);
-        const tempCanvas = document.createElement('canvas');
-        tempCanvas.width = canvas.width;
-        tempCanvas.height = sliceH;
-        const ctx = tempCanvas.getContext('2d');
-        ctx.drawImage(canvas, 0, -yOffset);
-        const sliceData = tempCanvas.toDataURL('image/jpeg', 0.97);
-        if (yOffset > 0) pdf.addPage();
-        pdf.addImage(sliceData, 'JPEG', 0, 0, pdfW, (sliceH / canvas.width) * pdfW);
-        yOffset += sliceH;
+    pdf.html(tmpl, {
+      callback: function(doc) {
+        tmpl.style.top = '-9999px';
+        tmpl.style.left = '-9999px';
+        const name = g('full_name') || 'موظف';
+        doc.save(`استمارة الزوجية - ${name}.pdf`);
+        showToast();
+        btn.disabled = false;
+        btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 15V3m0 12l-4-4m4 4l4-4"/><path d="M2 17l.621 2.485A2 2 0 004.561 21h14.878a2 2 0 001.94-1.515L22 17"/></svg> حفظ وتنزيل الاستمارة PDF`;
+      },
+      x: 0, y: 0,
+      width: 210,
+      windowWidth: 794,
+      autoPaging: 'text',
+      margin: [0,0,0,0],
+      html2canvas: {
+        scale: 2.5,
+        useCORS: true,
+        backgroundColor: '#ffffff',
+        logging: false
       }
-    }
+    });
 
-    const name = document.getElementById('full_name').value.trim() || 'استمارة';
-    pdf.save(`${name} - استمارة الزوجية والاولاد.pdf`);
-
-  } catch (err) {
-    alert('حدث خطأ أثناء إنشاء PDF. تأكد من تفعيل JavaScript.');
-    console.error(err);
+  } catch(e) {
+    console.error(e);
+    tmpl.style.top = '-9999px';
+    tmpl.style.left = '-9999px';
+    btn.disabled = false;
+    btn.innerHTML = `حفظ وتنزيل الاستمارة PDF`;
+    alert('خطأ: ' + e.message);
   }
-
-  btn.disabled = false;
-  btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M12 15V3m0 12l-4-4m4 4l4-4M2 17l.621 2.485A2 2 0 004.561 21h14.878a2 2 0 001.94-1.515L22 17"/></svg> تحميل PDF`;
 }
+
+function showToast(){
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 3000);
+}
+
+updateProgress();
 </script>
 </body>
 </html>
