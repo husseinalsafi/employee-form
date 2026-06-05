@@ -317,14 +317,14 @@ function addCard(){
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
       <div>
-        <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:6px">الوجه الأمامي</label>
+        <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:6px">الوجه الخلفي</label>
         <div id="front_prev_${id}" onclick="document.getElementById('front_inp_${id}').click()" style="height:100px;border:2px dashed var(--border);border-radius:7px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:var(--bg);font-size:11px;color:var(--muted);overflow:hidden">
           📷 اختر صورة
         </div>
         <input type="file" id="front_inp_${id}" accept="image/*" style="display:none" onchange="loadCardImg(${id},'front',this)">
       </div>
       <div>
-        <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:6px">الوجه الخلفي</label>
+        <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:6px">الوجه الامامي</label>
         <div id="back_prev_${id}" onclick="document.getElementById('back_inp_${id}').click()" style="height:100px;border:2px dashed var(--border);border-radius:7px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:var(--bg);font-size:11px;color:var(--muted);overflow:hidden">
           📷 اختر صورة
         </div>
